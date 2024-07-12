@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ToDoComposeApp</string>
+    <string name="add_task">Add Task</string>
+    <string name="back_icon">Back icon</string>
+    <string name="delete_icon">Delete icon</string>
+    <string name="save_icon">Save icon</string>
+    <string name="delete_all_tasks">Delete all Tasks</string>
+</resources>
