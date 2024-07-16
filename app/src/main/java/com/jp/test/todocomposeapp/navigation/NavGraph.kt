@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.jp.test.todocomposeapp.screens.AddTaskScreen
 import com.jp.test.todocomposeapp.screens.AnimatedSplashScreen
 import com.jp.test.todocomposeapp.screens.HomeScreen
 
@@ -17,7 +18,10 @@ fun SetupNavController(navController: NavHostController) {
             AnimatedSplashScreen(navController)
         }
         composable(route = Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(navController = navController)
+        }
+        composable(route = Screen.AddTask.route) {
+            AddTaskScreen(navController = navController)
         }
     }
 }

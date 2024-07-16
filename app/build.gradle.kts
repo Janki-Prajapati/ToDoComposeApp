@@ -66,6 +66,7 @@ dependencies {
     //Hilt- DI
     implementation(libs.hilt.android.v250)
     kapt(libs.hilt.android.compiler.v250)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.androidx.fragment.ktx)
     //Room database
@@ -74,6 +75,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     implementation(libs.accompanist.systemuicontroller)
+
+    implementation(libs.androidx.datastore.preferences)
 
 
     testImplementation(libs.androidx.room.testing)

@@ -2,9 +2,11 @@
 accompanistSystemuicontroller = "0.27.0"
 agp = "8.5.0"
 coreTesting = "2.2.0"
+datastorePreferences = "1.1.1"
 fragmentKtx = "1.8.1"
 hiltAndroid = "2.44"
 hiltAndroidCompiler = "2.50"
+hiltNavigationCompose = "1.2.0"
 hiltVersion = "2.50"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
@@ -22,7 +24,9 @@ truth = "1.4.3"
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }

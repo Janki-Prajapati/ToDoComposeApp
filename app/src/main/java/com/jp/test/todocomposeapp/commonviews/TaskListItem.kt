@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -65,6 +66,8 @@ fun TaskListItem(titleText: String, descriptionText: String, indicatorColor: Col
                 fontWeight = FontWeight.Normal,
                 fontStyle = FontStyle.Normal,
             )
+
+            HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
         }
 
 

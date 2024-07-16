@@ -10,24 +10,24 @@ class AddTaskValidatorsTest{
     @Test
     fun `empty description returns false`(){
         val result = AddTaskValidators.validateFields(description = "", title = "title", priority =  "low")
-        assertThat(result).isFalse()
+        assertThat(result.successful).isFalse()
     }
 
     @Test
     fun `empty title returns false`(){
         val result = AddTaskValidators.validateFields(description = "description", title = "", priority =  "low")
-        assertThat(result).isFalse()
+        assertThat(result.successful).isFalse()
     }
 
     @Test
     fun `empty priority returns false`(){
         val result = AddTaskValidators.validateFields(description = "description", title = "title", priority =  "")
-        assertThat(result).isFalse()
+        assertThat(result.successful).isFalse()
     }
 
     @Test
     fun `valid data returns true`(){
         val result = AddTaskValidators.validateFields(description = "description", title = "title", priority =  "low")
-        assertThat(result).isTrue()
+        assertThat(result.successful).isTrue()
     }
 }

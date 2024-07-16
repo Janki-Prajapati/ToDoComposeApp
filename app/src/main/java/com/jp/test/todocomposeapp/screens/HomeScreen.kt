@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,16 +44,23 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.jp.test.todocomposeapp.R
+import com.jp.test.todocomposeapp.TaskViewModel
+import com.jp.test.todocomposeapp.commonviews.TaskListItem
+import com.jp.test.todocomposeapp.navigation.Screen
 import com.jp.test.todocomposeapp.ui.theme.ColorYellow
 import com.jp.test.todocomposeapp.ui.theme.ColorYellowBg
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavHostController, taskViewModel: TaskViewModel = hiltViewModel()) {
     val context = LocalContext.current
     var isMenuDisplay by remember { mutableStateOf(false) }
+
+    val taskList by taskViewModel.dataList.collectAsState(initial = emptyList())
 
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(key1 = Unit) {
@@ -102,7 +110,7 @@ fun HomeScreen() {
             FloatingActionButton(
                 containerColor = ColorYellowBg,
                 shape = CircleShape,
-                onClick = { /*TODO*/ }) {
+                onClick = { navController.navigate(Screen.AddTask.route) }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
             }
         }
@@ -114,26 +122,39 @@ fun HomeScreen() {
                 .padding(innerPadding)
         ) {
 
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_sad),
-                    contentDescription = "No Tasks",
-                    alpha = 0.5f
-                )
-                Spacer(modifier = Modifier.height(5.dp))
+            if (taskList.isEmpty()) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_sad),
+                        contentDescription = "No Tasks",
+                        alpha = 0.5f
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
 
-                Text(
-                    text = "No Task",
-                    color = Color.Gray,
-                    fontSize = MaterialTheme.typography.labelLarge.fontSize,
-                    fontWeight = FontWeight.SemiBold,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = FontFamily.Monospace
-                )
+                    Text(
+                        text = "No Task",
+                        color = Color.Gray,
+                        fontSize = MaterialTheme.typography.labelLarge.fontSize,
+                        fontWeight = FontWeight.SemiBold,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            } else {
+                taskList.forEach { task ->
+                    val indicatorColor =
+                        taskViewModel.priorityList.value.find { it.id == task.id }?.color
+                            ?: Color.Transparent
+                    TaskListItem(
+                        titleText = task.title,
+                        descriptionText = task.description,
+                        indicatorColor = indicatorColor
+                    )
+                }
             }
 
 

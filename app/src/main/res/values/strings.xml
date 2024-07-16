@@ -5,4 +5,7 @@
     <string name="delete_icon">Delete icon</string>
     <string name="save_icon">Save icon</string>
     <string name="delete_all_tasks">Delete all Tasks</string>
+    <string name="strTheTitleCanNotBeBlank">The Title Cannot Be Blank</string>
+    <string name="strTheDescriptionCanNotBeBlank">The Description Cannot Be Blank</string>
+    <string name="strThePriorityCanNotBeBlank">The Priority Cannot Be Blank</string>
 </resources>
