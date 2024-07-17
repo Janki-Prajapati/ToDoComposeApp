@@ -1,7 +1,5 @@
 package com.jp.test.todocomposeapp.screens
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,28 +43,32 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.jp.test.todocomposeapp.R
 import com.jp.test.todocomposeapp.TaskViewModel
 import com.jp.test.todocomposeapp.commonviews.TaskListItem
 import com.jp.test.todocomposeapp.navigation.Screen
-import com.jp.test.todocomposeapp.ui.theme.ColorYellow
 import com.jp.test.todocomposeapp.ui.theme.ColorYellowBg
+import com.jp.test.todocomposeapp.ui.theme.ColorYellowTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavHostController, taskViewModel: TaskViewModel = hiltViewModel()) {
     val context = LocalContext.current
     var isMenuDisplay by remember { mutableStateOf(false) }
+    var isFilterMenuDisplay by remember { mutableStateOf(false) }
+    var isFilterDataDisplay by remember { mutableStateOf(false) }
 
-    val taskList by taskViewModel.dataList.collectAsState(initial = emptyList())
+    val taskList by taskViewModel.dataList.collectAsStateWithLifecycle()
 
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(key1 = Unit) {
         systemUiController.setSystemBarsColor(
             color = ColorYellowBg
         )
+        taskViewModel.getAllTasks()
     }
 
     Scaffold(
@@ -74,7 +76,7 @@ fun HomeScreen(navController: NavHostController, taskViewModel: TaskViewModel = 
             TopAppBar(
                 title = { Text(text = "Tasks") },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = ColorYellow,
+                    containerColor = ColorYellowTheme,
                     titleContentColor = Color.Black
                 ),
                 actions = {
@@ -85,12 +87,30 @@ fun HomeScreen(navController: NavHostController, taskViewModel: TaskViewModel = 
                             tint = Color.Black
                         )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {isFilterMenuDisplay = !isFilterMenuDisplay }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_sort),
                             contentDescription = "sort", tint = Color.Black
                         )
                     }
+
+                    DropdownMenu(
+                        expanded = isFilterMenuDisplay,
+                        onDismissRequest = { isFilterMenuDisplay = !isFilterMenuDisplay }) {
+
+                        taskViewModel.priorityList.forEach {
+                            DropdownMenuItem(
+                                text = { Text(text = it.name) },
+                                contentPadding = PaddingValues(5.dp),
+                                onClick = {
+                                    isFilterMenuDisplay = !isFilterMenuDisplay
+                                    taskViewModel.getTasksWithId(it.id)
+                                    println("==>> ${taskList.size} for id ${it.id}")
+                                })
+                        }
+
+                    }
+
                     IconButton(onClick = { isMenuDisplay = !isMenuDisplay }) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
@@ -99,9 +119,13 @@ fun HomeScreen(navController: NavHostController, taskViewModel: TaskViewModel = 
                         )
                     }
 
-                    MenuDropDown(context, isMenuDisplay = isMenuDisplay) { isMenuClose ->
-                        isMenuDisplay = isMenuClose
-                    }
+                    MenuDropDown(
+                        isMenuDisplay = isMenuDisplay,
+                        closeDropdown = { isMenuClose -> isMenuDisplay = isMenuClose },
+                        deleteAllClicked = {
+                            isMenuDisplay = !isMenuDisplay
+                            taskViewModel.deleteAllTasks()
+                        })
 
                 }
             )
@@ -118,6 +142,7 @@ fun HomeScreen(navController: NavHostController, taskViewModel: TaskViewModel = 
     ) { innerPadding ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .background(Color.White)
                 .padding(innerPadding)
         ) {
@@ -147,7 +172,7 @@ fun HomeScreen(navController: NavHostController, taskViewModel: TaskViewModel = 
             } else {
                 taskList.forEach { task ->
                     val indicatorColor =
-                        taskViewModel.priorityList.value.find { it.id == task.id }?.color
+                        taskViewModel.priorityList.find { it.id == task.priority }?.color
                             ?: Color.Transparent
                     TaskListItem(
                         titleText = task.title,
@@ -163,17 +188,17 @@ fun HomeScreen(navController: NavHostController, taskViewModel: TaskViewModel = 
 }
 
 @Composable
-fun MenuDropDown(context: Context, isMenuDisplay: Boolean, closeDropdown: (Boolean) -> Unit) {
+fun MenuDropDown(
+    isMenuDisplay: Boolean,
+    closeDropdown: (Boolean) -> Unit,
+    deleteAllClicked: () -> Unit
+) {
     DropdownMenu(expanded = isMenuDisplay, onDismissRequest = { closeDropdown(!isMenuDisplay) }) {
         DropdownMenuItem(
             text = { Text(text = stringResource(R.string.delete_all_tasks)) },
             contentPadding = PaddingValues(5.dp),
-            onClick = { Toast.makeText(context, "Delete all clicked!!", Toast.LENGTH_LONG).show() })
+            onClick = { deleteAllClicked() })
     }
 }
 
-/*@Preview(showSystemUi = true)
-@Composable
-private fun HomeScreenPreview() {
-    HomeScreen()
-}*/
+

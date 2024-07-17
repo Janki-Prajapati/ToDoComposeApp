@@ -39,15 +39,15 @@ import com.jp.test.todocomposeapp.R
 import com.jp.test.todocomposeapp.TaskViewModel
 import com.jp.test.todocomposeapp.commonviews.DynamicSelectTextField
 import com.jp.test.todocomposeapp.database.Task
-import com.jp.test.todocomposeapp.ui.theme.ColorYellow
 import com.jp.test.todocomposeapp.ui.theme.ColorYellowBg
+import com.jp.test.todocomposeapp.ui.theme.ColorYellowTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTaskScreen(navController: NavHostController) {
     val taskViewModel = hiltViewModel<TaskViewModel>()
 
-    val priorityList = taskViewModel.priorityList.collectAsState()
+    val priorityList = taskViewModel._priorityList.collectAsState()
 
     val context = LocalContext.current
 
@@ -63,7 +63,7 @@ fun AddTaskScreen(navController: NavHostController) {
             TopAppBar(
                 title = { Text(text = stringResource(R.string.add_task)) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = ColorYellow,
+                    containerColor = ColorYellowTheme,
                     titleContentColor = Color.Black
                 ),
                 navigationIcon = {

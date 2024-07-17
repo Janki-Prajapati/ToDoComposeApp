@@ -3,18 +3,21 @@ package com.jp.test.todocomposeapp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jp.test.todocomposeapp.database.Task
 import com.jp.test.todocomposeapp.database.TaskRepository
 import com.jp.test.todocomposeapp.generic.UiText
 import com.jp.test.todocomposeapp.models.Priority
+import com.jp.test.todocomposeapp.ui.theme.ColorGreen
+import com.jp.test.todocomposeapp.ui.theme.ColorRed
+import com.jp.test.todocomposeapp.ui.theme.ColorYellow
 import com.jp.test.todocomposeapp.usecase.ValidateDescriptionUseCase
 import com.jp.test.todocomposeapp.usecase.ValidateTitleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,29 +25,59 @@ import javax.inject.Inject
 class TaskViewModel @Inject constructor(private val taskRepository: TaskRepository) : ViewModel() {
 
     /*
-    * Database operations    *
+    * Database operations
+    *
     * */
+
+    private val _dataList: MutableStateFlow<List<Task>> = MutableStateFlow<List<Task>>(emptyList())
+    val dataList get() = _dataList.asStateFlow()
 
     fun insertDataToDb(task: Task) {
         viewModelScope.launch {
             taskRepository.addTask(task = task)
         }
     }
-    val dataList: Flow<List<Task>> = taskRepository.getAllTasks()
 
-    private val _priorityList = MutableStateFlow(
+    fun deleteAllTasks() {
+        viewModelScope.launch {
+            taskRepository.deleteAllTasks()
+        }
+    }
+
+    fun getAllTasks() {
+        viewModelScope.launch {
+            taskRepository.getAllTasks().collectLatest {
+                _dataList.emit(it)
+            }
+
+        }
+    }
+
+    fun getTasksWithId(id: Int) {
+
+        viewModelScope.launch {
+            taskRepository.getTasksWithId(id).collectLatest {
+                _dataList.emit(it)
+            }
+
+        }
+
+    }
+
+    //UI logic from here
+    val _priorityList = MutableStateFlow(
         listOf(
-            Priority(1, "High", Color.Red, isSelected = false),
-            Priority(2, "Medium", Color.Yellow, isSelected = false),
-            Priority(3, "Low", Color.Green, isSelected = true)
+            Priority(1, "High", ColorRed, isSelected = false),
+            Priority(2, "Medium", ColorYellow, isSelected = false),
+            Priority(3, "Low", ColorGreen, isSelected = true)
         )
     )
 
-    val priorityList: MutableStateFlow<List<Priority>> get() = _priorityList
+    val priorityList: List<Priority> get() = _priorityList.value
 
 
     fun updatePriority(updatedValue: String) {
-        priorityList.value = priorityList.value.map {
+        _priorityList.value = priorityList.map {
             if (it.name == updatedValue) {
                 it.copy(isSelected = true)
             } else {

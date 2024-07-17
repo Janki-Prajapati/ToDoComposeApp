@@ -19,4 +19,12 @@ class TaskRepository @Inject constructor(private val taskDao: TaskDao) {
     fun getTask(id: Int): Flow<Task> {
         return taskDao.getTask(id = id)
     }
+
+    suspend fun deleteAllTasks(){
+        taskDao.deleteAllTasks()
+    }
+
+    fun getTasksWithId(id : Int): Flow<List<Task>> {
+        return taskDao.getTasksWithId(id)
+    }
 }

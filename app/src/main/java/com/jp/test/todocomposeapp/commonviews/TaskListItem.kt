@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,12 +23,13 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jp.test.todocomposeapp.ui.theme.ColorGreenBg
 
 @Composable
 fun TaskListItem(titleText: String, descriptionText: String, indicatorColor: Color) {
     Card(modifier = Modifier.padding(7.dp),
         colors = CardColors(
-            containerColor = Color.White,
+            containerColor = ColorGreenBg,
             contentColor = Color.Black,
             disabledContentColor = Color.LightGray,
             disabledContainerColor = Color.LightGray
@@ -67,7 +67,7 @@ fun TaskListItem(titleText: String, descriptionText: String, indicatorColor: Col
                 fontStyle = FontStyle.Normal,
             )
 
-            HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
+//            HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
         }
 
 

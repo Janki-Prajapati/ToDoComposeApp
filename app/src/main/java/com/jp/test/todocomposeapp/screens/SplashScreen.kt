@@ -27,8 +27,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.jp.test.todocomposeapp.R
 import com.jp.test.todocomposeapp.navigation.Screen
-import com.jp.test.todocomposeapp.ui.theme.ColorGreen
-import com.jp.test.todocomposeapp.ui.theme.ColorYellowBg
+import com.jp.test.todocomposeapp.ui.theme.ColorGreenTheme
 import kotlinx.coroutines.delay
 
 @Composable
@@ -45,7 +44,7 @@ fun AnimatedSplashScreen(navController: NavHostController) {
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(key1 = true) {
         systemUiController.setSystemBarsColor(
-            color = ColorGreen
+            color = ColorGreenTheme
         )
         startAnimation = true
         delay(4000)
@@ -61,7 +60,7 @@ fun AnimatedSplashScreen(navController: NavHostController) {
 fun Splash(alpha: Float) {
     Box(
         modifier = Modifier
-            .background(if (isSystemInDarkTheme()) Color.Black else ColorGreen)
+            .background(if (isSystemInDarkTheme()) Color.Black else ColorGreenTheme)
             .fillMaxSize(),
         contentAlignment = Alignment.Center
 

@@ -24,4 +24,10 @@ interface TaskDao {
 
     @Update
     suspend fun updateTask(task: Task)
+
+    @Query("DELETE FROM tasks")
+    suspend fun deleteAllTasks()
+
+    @Query("SELECT * FROM tasks WHERE priority = :id")
+    fun getTasksWithId(id : Int): Flow<List<Task>>
 }

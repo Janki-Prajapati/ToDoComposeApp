@@ -78,6 +78,8 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
 
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
 
     testImplementation(libs.androidx.room.testing)
     // For Robolectric tests.
