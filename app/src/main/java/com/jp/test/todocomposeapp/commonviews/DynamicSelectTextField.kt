@@ -1,6 +1,7 @@
 package com.jp.test.todocomposeapp.commonviews
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,13 +10,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,21 +28,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jp.test.todocomposeapp.R
 import com.jp.test.todocomposeapp.models.Priority
+import com.jp.test.todocomposeapp.ui.theme.ColorGreen
+import com.jp.test.todocomposeapp.ui.theme.ColorRed
+import com.jp.test.todocomposeapp.ui.theme.ColorYellow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DynamicSelectTextField(
+    modifier: Modifier = Modifier,
     selectedValue: Priority? = null,
     itemList: List<Priority>,
-    label: String,
-    onValueChangedEvent: (Priority) -> Unit,
-    modifier: Modifier = Modifier
+    onValueChangedEvent: (Priority) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val icon = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
 
 
     ExposedDropdownMenuBox(
@@ -48,32 +56,48 @@ fun DynamicSelectTextField(
         onExpandedChange = { expanded = !expanded },
         modifier = modifier
     ) {
-        OutlinedTextField(
-            readOnly = true,
-            value = selectedValue?.name ?: "",
-            onValueChange = {},
-            label = { Text(text = label) },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
-            colors = OutlinedTextFieldDefaults.colors(),
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .menuAnchor()
                 .fillMaxWidth()
-        )
+                .menuAnchor()
+                .border(width = 1.dp, Color.LightGray)
+        ) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(all = 15.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+
+                PriorityItem(
+                    priorityText = selectedValue?.name ?: "",
+                    priorityColor = itemList.find { it == selectedValue }?.color
+                        ?: Color.Transparent,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
+
+                Icon(
+                    imageVector = icon,
+                    contentDescription = stringResource(R.string.text_dropdownicon)
+                )
+
+
+            }
+        }
 
         ExposedDropdownMenu(
             modifier = Modifier
                 .background(Color.White)
-                .padding(all = 5.dp)
-                .fillMaxWidth(),
+                .padding(all = 5.dp),
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
             itemList.onEachIndexed { index, item ->
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .clickable {
                             onValueChangedEvent(item)
                             expanded = !expanded
@@ -87,7 +111,6 @@ fun DynamicSelectTextField(
 
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth()
                                 .padding(all = 3.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -101,7 +124,7 @@ fun DynamicSelectTextField(
 
                             Box(
                                 modifier = Modifier
-                                    .size(8.dp)
+                                    .size(12.dp)
                                     .clip(CircleShape)
                                     .background(item.color)
                             )
@@ -110,15 +133,20 @@ fun DynamicSelectTextField(
 
                 }
             }
-            /*DropdownMenuItem(
-                text = { Text(text = item.name) },
-                onClick = {
-                    expanded = false
-                    onValueChangedEvent( item.name)
-                }
-            )*/
         }
     }
+}
+
+@Preview
+@Composable
+private fun DynamicSelectTextFieldPreview() {
+    DynamicSelectTextField(selectedValue = Priority(1, "High", ColorRed, isSelected = true),
+        itemList = listOf(
+            Priority(1, "High", ColorRed, isSelected = false),
+            Priority(2, "Medium", ColorYellow, isSelected = false),
+            Priority(3, "Low", ColorGreen, isSelected = true)
+        ),
+        onValueChangedEvent = {})
 }
 
 

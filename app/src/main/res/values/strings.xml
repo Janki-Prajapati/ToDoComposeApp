@@ -8,4 +8,15 @@
     <string name="strTheTitleCanNotBeBlank">The Title Cannot Be Blank</string>
     <string name="strTheDescriptionCanNotBeBlank">The Description Cannot Be Blank</string>
     <string name="strThePriorityCanNotBeBlank">The Priority Cannot Be Blank</string>
+    <string name="menuicon">menuIcon</string>
+    <string name="home_screen_title_tasks">Tasks</string>
+    <string name="text_search">search</string>
+    <string name="txt_close_search">Close Search</string>
+    <string name="txt_clear_search">Clear Search</string>
+    <string name="text_add">Add</string>
+    <string name="text_no_tasks_found">No Tasks Found</string>
+    <string name="text_title">Title</string>
+    <string name="text_description">Description</string>
+    <string name="text_logo_icon">Logo Icon</string>
+    <string name="text_dropdownicon">dropDownIcon</string>
 </resources>

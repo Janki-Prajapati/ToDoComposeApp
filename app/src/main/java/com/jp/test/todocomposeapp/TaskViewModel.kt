@@ -18,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,7 +30,7 @@ class TaskViewModel @Inject constructor(private val taskRepository: TaskReposito
     *
     * */
 
-    private val _dataList: MutableStateFlow<List<Task>> = MutableStateFlow<List<Task>>(emptyList())
+    private val _dataList: MutableStateFlow<List<Task>> = MutableStateFlow(emptyList())
     val dataList get() = _dataList.asStateFlow()
 
     fun insertDataToDb(task: Task) {
@@ -64,8 +65,34 @@ class TaskViewModel @Inject constructor(private val taskRepository: TaskReposito
 
     }
 
+    fun getTasksWithSearchQuery(query: String) {
+        viewModelScope.launch {
+            if (query.isEmpty()) {
+                getAllTasks()
+            } else {
+                val filteredTasksFlow = flow {
+                    val filteredTasks = _dataList.value.filter {
+                        it.title.contains(
+                            query,
+                            ignoreCase = true
+                        )
+                    }
+                    emit(filteredTasks)
+                }
+
+                filteredTasksFlow.collectLatest {
+                    println("filter size ==>> ${it.size}")
+                    println("dataList.value size ==>> ${dataList.value.size}")
+                    _dataList.emit(it)
+                }
+
+            }
+        }
+
+    }
+
     //UI logic from here
-    val _priorityList = MutableStateFlow(
+    private val _priorityList = MutableStateFlow(
         listOf(
             Priority(1, "High", ColorRed, isSelected = false),
             Priority(2, "Medium", ColorYellow, isSelected = false),

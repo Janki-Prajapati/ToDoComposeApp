@@ -22,17 +22,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PriorityItem(priorityText: String, priorityColor: Color) {
+fun PriorityItem(priorityText: String, priorityColor: Color, modifier: Modifier = Modifier) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(5.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(8.dp)
+                .size(12.dp)
                 .clip(CircleShape)
                 .background(priorityColor)
         )
