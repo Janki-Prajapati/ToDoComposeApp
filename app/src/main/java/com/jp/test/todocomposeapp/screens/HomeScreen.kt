@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -37,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.jp.test.todocomposeapp.R
+import com.jp.test.todocomposeapp.SharedViewModel
 import com.jp.test.todocomposeapp.TaskViewModel
 import com.jp.test.todocomposeapp.commonviews.CustomTopBar
 import com.jp.test.todocomposeapp.commonviews.TaskListItem
@@ -46,7 +48,11 @@ import com.jp.test.todocomposeapp.navigation.TASK_ARGUMENT_VALUE_2
 import com.jp.test.todocomposeapp.ui.theme.ColorYellowBg
 
 @Composable
-fun HomeScreen(navController: NavHostController, taskViewModel: TaskViewModel = hiltViewModel()) {
+fun HomeScreen(
+    navController: NavHostController,
+    sharedViewModel: SharedViewModel,
+    taskViewModel: TaskViewModel = hiltViewModel()
+) {
 
     var isMenuDisplay by remember { mutableStateOf(false) }
     var isFilterMenuDisplay by remember { mutableStateOf(false) }
@@ -146,15 +152,20 @@ fun HomeScreen(navController: NavHostController, taskViewModel: TaskViewModel = 
                     )
                 }
             } else {
-                taskList.forEach { task ->
+                taskList.forEachIndexed { index, task ->
                     val indicatorColor =
                         taskViewModel.priorityList.find { it.id == task.priority }?.color
                             ?: Color.Transparent
+                    if (index != 0) {
+                        HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
+                    }
                     TaskListItem(
                         titleText = task.title,
                         descriptionText = task.description,
-                        indicatorColor = indicatorColor
+                        indicatorColor = indicatorColor,
+                        index = index
                     ) {
+                        sharedViewModel.addTaskToUpdate(taskList[it])
                         navController.navigate(
                             route = Screen.AddTask.passCalledFrom(
                                 TASK_ARGUMENT_VALUE_2

@@ -27,4 +27,8 @@ class TaskRepository @Inject constructor(private val taskDao: TaskDao) {
     fun getTasksWithId(id : Int): Flow<List<Task>> {
         return taskDao.getTasksWithId(id)
     }
+
+    suspend fun updateTask(task: Task) {
+        taskDao.updateTask(task = task)
+    }
 }

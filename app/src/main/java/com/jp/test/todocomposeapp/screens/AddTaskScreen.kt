@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,13 +20,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -37,9 +43,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.jp.test.todocomposeapp.R
+import com.jp.test.todocomposeapp.SharedViewModel
 import com.jp.test.todocomposeapp.TaskViewModel
 import com.jp.test.todocomposeapp.commonviews.DynamicSelectTextField
 import com.jp.test.todocomposeapp.database.Task
@@ -48,28 +54,59 @@ import com.jp.test.todocomposeapp.ui.theme.ColorYellowTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTaskScreen(navController: NavHostController, calledFrom: String) {
+fun AddTaskScreen(
+    navController: NavHostController,
+    calledFrom: String,
+    sharedViewModel: SharedViewModel
+) {
     val taskViewModel = hiltViewModel<TaskViewModel>()
 
     val context = LocalContext.current
+
+    val title =
+        if (calledFrom == "Add") stringResource(R.string.add_task) else stringResource(R.string.edit_task)
+
+    val taskId = remember {
+        mutableIntStateOf(1)
+    }
+
+    val shouldShowDialog = remember { mutableStateOf(false) }
 
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(key1 = Unit) {
         systemUiController.setSystemBarsColor(
             color = ColorYellowBg
         )
+
+        val taskToUpdate = sharedViewModel.taskToUpdate
+        println("==>> Task to update $taskToUpdate")
+        taskToUpdate?.let {
+            taskId.intValue = it.id
+            println("==>> TaskID $taskId")
+            taskViewModel.formState = taskViewModel.formState.copy(
+                title = it.title,
+                description = it.description,
+                priorityId = it.priority
+            )
+            taskViewModel.priorityList.forEach { priority ->
+                priority.isSelected = priority.id == it.priority
+            }
+        }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(R.string.add_task)) },
+                title = { Text(text = title) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = ColorYellowTheme,
                     titleContentColor = Color.Black
                 ),
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        sharedViewModel.removeTaskToUpdate()
+                        navController.popBackStack()
+                    }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = stringResource(
@@ -80,7 +117,9 @@ fun AddTaskScreen(navController: NavHostController, calledFrom: String) {
                 },
                 actions = {
                     if (calledFrom == "Edit") {
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = {
+                            shouldShowDialog.value = true
+                        }) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = stringResource(R.string.delete_icon),
@@ -90,13 +129,25 @@ fun AddTaskScreen(navController: NavHostController, calledFrom: String) {
                     }
                     IconButton(onClick = {
                         if (taskViewModel.validateTitle() && taskViewModel.validateDescription()) {
-                            taskViewModel.insertDataToDb(
-                                Task(
+
+                            println("==>> TaskID ==  $taskId")
+                            if (calledFrom == "Edit") {
+                                val task = Task(
+                                    id = taskId.intValue,
                                     title = taskViewModel.formState.title,
                                     priority = taskViewModel.formState.priorityId,
                                     description = taskViewModel.formState.description
                                 )
-                            )
+                                taskViewModel.updateDataToDb(task = task)
+                            } else {
+                                val task = Task(
+                                    title = taskViewModel.formState.title,
+                                    priority = taskViewModel.formState.priorityId,
+                                    description = taskViewModel.formState.description
+                                )
+                                taskViewModel.insertDataToDb(task = task)
+                            }
+                            sharedViewModel.removeTaskToUpdate()
                             navController.popBackStack()
                         }
                     }) {
@@ -201,11 +252,47 @@ fun AddTaskScreen(navController: NavHostController, calledFrom: String) {
 
 
     }
+
+    if (shouldShowDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                // Dismiss the dialog when the user clicks outside the dialog or on the back
+                // button. If you want to disable that functionality, simply use an empty
+                // onDismissRequest.
+                shouldShowDialog.value = false
+            },
+            title = { Text(text = "Attention!!") },
+            text = { Text(text = "Are you sure you want to delete this task?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    shouldShowDialog.value = false
+                    sharedViewModel.taskToUpdate?.let {
+                        taskViewModel.deleteTask(it)
+                    }
+                    sharedViewModel.removeTaskToUpdate()
+                    navController.popBackStack()
+                }) { Text("Confirm") }
+            },
+            dismissButton = {
+                TextButton(onClick = { shouldShowDialog.value = false }) { Text("Dismiss") }
+            },
+            containerColor = Color.White,
+            titleContentColor = Color.Black,
+            textContentColor = Color.Black,
+            tonalElevation = 5.dp,
+           /* icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_warning),
+                    contentDescription = "warning icon"
+                )
+            }*/
+        )
+    }
 }
 
 
 @Preview
 @Composable
 private fun AddTaskScreenPreview() {
-    AddTaskScreen(rememberNavController(), "Add")
+//    AddTaskScreen(rememberNavController(), "Add")
 }

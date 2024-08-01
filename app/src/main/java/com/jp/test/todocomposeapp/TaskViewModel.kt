@@ -65,6 +65,18 @@ class TaskViewModel @Inject constructor(private val taskRepository: TaskReposito
 
     }
 
+    fun updateDataToDb(task: Task) {
+        viewModelScope.launch {
+            taskRepository.updateTask(task = task)
+        }
+    }
+
+    fun deleteTask(task: Task) {
+        viewModelScope.launch {
+            taskRepository.deleteTask(task = task)
+        }
+    }
+
     fun getTasksWithSearchQuery(query: String) {
         viewModelScope.launch {
             if (query.isEmpty()) {

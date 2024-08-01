@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,55 +35,47 @@ fun TaskListItem(
     titleText: String,
     descriptionText: String,
     indicatorColor: Color,
-    onTaskItemClick: () -> Unit
+    index: Int,
+    onTaskItemClick: (Int) -> Unit
 ) {
-    Card(modifier = Modifier
-        .padding(7.dp)
+    Column(modifier = Modifier
+        .background(Color.White)
+        .padding(horizontal = 16.dp, vertical = 8.dp)
         .clickable(indication = null, interactionSource = remember {
             MutableInteractionSource()
-        }) { onTaskItemClick() },
-        colors = CardColors(
-            containerColor = ColorGreenBg,
-            contentColor = Color.Black,
-            disabledContentColor = Color.LightGray,
-            disabledContainerColor = Color.LightGray
-        )
-    ) {
+        }) { onTaskItemClick(index) }) {
 
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = titleText,
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                    fontWeight = FontWeight.Bold,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = FontFamily.Serif
-                )
-
-                Box(
-                    modifier = Modifier
-                        .size(12.dp)
-                        .clip(CircleShape)
-                        .background(indicatorColor)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(5.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
             Text(
-                text = descriptionText,
-                fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                fontWeight = FontWeight.Normal,
+                modifier = Modifier.weight(1f),
+                text = titleText,
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Normal,
                 fontFamily = FontFamily.Serif
             )
 
+            Box(
+                modifier = Modifier
+                    .size(12.dp)
+                    .clip(CircleShape)
+                    .background(indicatorColor)
+            )
         }
+
+        Spacer(modifier = Modifier.height(5.dp))
+
+        Text(
+            text = descriptionText,
+            fontSize = MaterialTheme.typography.titleSmall.fontSize,
+            fontWeight = FontWeight.Normal,
+            fontStyle = FontStyle.Normal,
+            fontFamily = FontFamily.Serif
+        )
 
 
     }
@@ -91,5 +84,5 @@ fun TaskListItem(
 @Preview(showSystemUi = true)
 @Composable
 private fun TaskListItemPreview() {
-    TaskListItem("Title", "Description", Color.Red) {}
+//    TaskListItem("Title", "Description", Color.Red) {}
 }
