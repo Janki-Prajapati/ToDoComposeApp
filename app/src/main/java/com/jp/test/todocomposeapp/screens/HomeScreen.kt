@@ -137,7 +137,7 @@ fun HomeScreen(
 
             if (taskList.isEmpty()) {
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.testTag("empty_list_test_tag").fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -149,7 +149,7 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(5.dp))
 
                     Text(
-                        text = "No Task",
+                        text = stringResource(R.string.text_no_tasks_found),
                         color = Color.Gray,
                         fontSize = MaterialTheme.typography.labelLarge.fontSize,
                         fontWeight = FontWeight.SemiBold,
@@ -159,7 +159,8 @@ fun HomeScreen(
                 }
             } else {
 
-                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                LazyColumn(modifier = Modifier
+                    .testTag("Task_list_test_tag").fillMaxWidth()) {
 
                     itemsIndexed(taskList,  key = { _, item -> item.hashCode() }) { index, task ->
                         val indicatorColor =
