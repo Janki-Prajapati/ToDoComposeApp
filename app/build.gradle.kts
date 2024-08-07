@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.navigation.compose)
     //Hilt- DI
     implementation(libs.hilt.android.v250)
+    implementation(libs.androidx.navigation.testing)
+    implementation(libs.androidx.ui.test.junit4.android)
     kapt(libs.hilt.android.compiler.v250)
     implementation(libs.androidx.hilt.navigation.compose)
 
@@ -103,4 +105,12 @@ dependencies {
 
     testImplementation(libs.truth)
     androidTestImplementation(libs.truth)
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("androidx.test:core:1.5.0")
+        force("androidx.test.ext:junit:1.1.5")
+        force("androidx.test.espresso:espresso-core:3.5.1")
+    }
 }

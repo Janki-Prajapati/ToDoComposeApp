@@ -6,8 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -26,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -124,6 +129,7 @@ fun HomeScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
+                .testTag("Home_screen")
                 .fillMaxSize()
                 .background(Color.White)
                 .padding(innerPadding)
@@ -152,24 +158,30 @@ fun HomeScreen(
                     )
                 }
             } else {
-                taskList.forEachIndexed { index, task ->
-                    val indicatorColor =
-                        taskViewModel.priorityList.find { it.id == task.priority }?.color
-                            ?: Color.Transparent
-                    if (index != 0) {
-                        HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
-                    }
-                    TaskListItem(
-                        titleText = task.title,
-                        descriptionText = task.description,
-                        indicatorColor = indicatorColor,
-                        index = index
-                    ) {
-                        sharedViewModel.addTaskToUpdate(taskList[it])
-                        navController.navigate(
-                            route = Screen.AddTask.passCalledFrom(
-                                TASK_ARGUMENT_VALUE_2
-                            )
+
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+
+                    itemsIndexed(taskList,  key = { _, item -> item.hashCode() }) { index, task ->
+                        val indicatorColor =
+                            taskViewModel.priorityList.find { it.id == task.priority }?.color
+                                ?: Color.Transparent
+                        if (index != 0) {
+                            HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
+                        }
+                        TaskListItem(
+                            task,
+                            indicatorColor = indicatorColor,
+                            onTaskItemClick = {
+                                sharedViewModel.addTaskToUpdate(it)
+                                navController.navigate(
+                                    route = Screen.AddTask.passCalledFrom(
+                                        TASK_ARGUMENT_VALUE_2
+                                    )
+                                )
+                            },
+                            onRemove = {
+                                taskViewModel.deleteTask(task)
+                            }
                         )
                     }
                 }
