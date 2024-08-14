@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -137,7 +136,9 @@ fun HomeScreen(
 
             if (taskList.isEmpty()) {
                 Column(
-                    modifier = Modifier.testTag("empty_list_test_tag").fillMaxSize(),
+                    modifier = Modifier
+                        .testTag("empty_list_test_tag")
+                        .fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -159,10 +160,13 @@ fun HomeScreen(
                 }
             } else {
 
-                LazyColumn(modifier = Modifier
-                    .testTag("Task_list_test_tag").fillMaxWidth()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .testTag("Task_list_test_tag")
+                        .fillMaxWidth()
+                ) {
 
-                    itemsIndexed(taskList,  key = { _, item -> item.hashCode() }) { index, task ->
+                    itemsIndexed(taskList, key = { _, item -> item.hashCode() }) { index, task ->
                         val indicatorColor =
                             taskViewModel.priorityList.find { it.id == task.priority }?.color
                                 ?: Color.Transparent
