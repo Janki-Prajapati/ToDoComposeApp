@@ -17,6 +17,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
@@ -28,6 +29,7 @@ import com.jp.test.todocomposeapp.ui.theme.ColorYellowTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultTopBar(
+    modifier: Modifier = Modifier,
     filterMenuDisplayed: Boolean,
     moreMenuDisplayed: Boolean,
     list: List<Priority>,
@@ -38,7 +40,7 @@ fun DefaultTopBar(
     onSearchClicked: () -> Unit
 ) {
     TopAppBar(
-        title = { Text(text = stringResource(R.string.home_screen_title_tasks)) },
+        title = { Text(modifier = Modifier.testTag("home_top_bar_title"), text = stringResource(R.string.home_screen_title_tasks)) },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = ColorYellowTheme,
             titleContentColor = Color.Black

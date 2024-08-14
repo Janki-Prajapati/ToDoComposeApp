@@ -1,6 +1,8 @@
 package com.jp.test.todocomposeapp.commonviews
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.TextFieldValue
 import com.jp.test.todocomposeapp.models.Priority
 
@@ -29,6 +31,7 @@ fun CustomTopBar(
         )
     } else {
         DefaultTopBar(
+            modifier = Modifier.testTag("home_screen_top_bar_test_tag"),
             filterMenuDisplayed = filterMenuDisplayed,
             moreMenuDisplayed = moreMenuDisplayed,
             list = list,

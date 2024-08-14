@@ -1,16 +1,24 @@
 package com.jp.test.todocomposeapp.screens
 
 import androidx.activity.compose.setContent
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.printToLog
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jp.test.todocomposeapp.activity.MainActivity
+import com.jp.test.todocomposeapp.commonviews.CustomTopBar
+import com.jp.test.todocomposeapp.commonviews.DefaultTopBar
 import com.jp.test.todocomposeapp.commonviews.TaskListItem
 import com.jp.test.todocomposeapp.database.Task
 import com.jp.test.todocomposeapp.navigation.Screen
@@ -83,5 +91,28 @@ class HomeScreenKtTest {
 
         // Check that the correct number of items are displayed
         assert(listItems.size == 3)
+    }
+
+    @Test
+    fun test_home_screen_toolbar_displayed(){
+        composeTestRule.activity.setContent {
+            DefaultTopBar(
+                filterMenuDisplayed = false,
+                moreMenuDisplayed = false,
+                list = emptyList(),
+                onSearchClicked = {},
+                selectedFilterId = {},
+                deleteAllClicked = {  },
+                filterClicked = {},
+                moreClicked = {})
+        }
+// Ensure Compose is idle before performing assertions
+        composeTestRule.waitForIdle()
+
+        // Print the UI hierarchy to debug
+        composeTestRule.onRoot().printToLog("TAG")
+
+        composeTestRule.onNodeWithTag("home_top_bar_title").assertIsDisplayed()
+
     }
 }
